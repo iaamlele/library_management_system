@@ -19,7 +19,7 @@ int main() {
         finish_with_error(con);
     }
 
-    if(mysql_query(con, "SELECT * FROM new_schema.user_information")) {
+    if(mysql_query(con, "SELECT * FROM new_schema.book")) {
         finish_with_error(con);
     }
 

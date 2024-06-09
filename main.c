@@ -1,14 +1,10 @@
 #include <mysql/mysql.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "lms.c"
-#include "register_and_login.c"
-
-#define DEFAULT_SIZE 8
+#include "lmsV2.0_mysql.c"
 
 int main()
 {
-    HASH_TABLE hTable = create_hash(DEFAULT_SIZE);
 
     while (1)
     {
@@ -50,22 +46,42 @@ int main()
                 if (user_operate == 1)
                 { // 浏览
                     printf("浏览\n");
-                    printf_hash(hTable);
+                    if(browse_book()) {
+                        printf("书籍信息如下：\n");
+                    }else {
+                        printf("无书籍\n");
+                    }
+                    // printf_hash(hTable);
                 }
                 else if (user_operate == 2)
                 { // 查询
                     printf("查询\n");
-                    administrator_inquiry_book(hTable);
+                    if(inquire_book()) {
+                        printf("查询成功\n");
+                    }else {
+                        printf("查询失败\n");
+                    }
+                    // administrator_inquiry_book(hTable);//findnode
                 }
                 else if (user_operate == 3)
                 { // 借书
                     printf("借书\n");  
-                    user_borrow__book(hTable); //借书时返回借书成功。。
+                    if(delete_or_borrow_book()){
+                        printf("借书成功\n");
+                    }else {
+                        printf("借书失败\n");
+                    }
+                    // user_borrow__book(hTable); //delete
                 }
                 else if (user_operate == 4)
                 { // 还书
                     printf("还书\n");
-                    user_return_book(hTable);
+                    if(insert_or_return_book() == 1) {
+                        printf("成功归还图书\n");
+                    }else {
+                        printf("归还图书失败\n");
+                    }
+                    // user_return_book(hTable); //insert
                 }
                 else if (user_operate == 5)
                 { // 退出系统
@@ -89,27 +105,47 @@ int main()
                 if (management_operate == 1)
                 { // 浏览
                     printf("浏览\n");
-                    printf_hash(hTable);
+                    if(browse_book()) {
+                        printf("书籍信息如下：\n");
+                    }else {
+                        printf("无书籍\n");
+                    }
+                    // printf_hash(hTable);
                 }
                 else if (management_operate == 2)
                 { // 查询
-                    printf("查询\n");
-                    administrator_inquiry_book(hTable);
+                    printf("查询\n"); //findnode
+                    if(inquire_book()) {
+                        printf("查询成功\n");
+                    }else {
+                        printf("查询失败\n");
+                    }
+                    // administrator_inquiry_book(hTable);
                 }
                 else if (management_operate == 3)
                 { // 新增图书
-                    printf("新增图书\n");
-                    administrator_adds_book(hTable);
+                    printf("新增图书\n");  //insert
+                    if(insert_or_return_book() == 1) {
+                        printf("成功新增图书\n");
+                    }else {
+                        printf("新增图书失败\n");
+                    }
+                    // administrator_adds_book(hTable);
                 }
                 else if (management_operate == 4)
                 { // 删除图书
                     printf("删除图书\n");
-                    administrator_delete_book(hTable); 
+                    if(delete_or_borrow_book()) {
+                        printf("删除成功\n");
+                    }else {
+                        printf("删除失败\n");
+                    }
+                    // administrator_delete_book(hTable); //delete
                 }
                 else if (management_operate == 5)
                 { // 修改图书
                     printf("修改图书\n");
-                    administrator_revise_book(hTable);
+                    // administrator_revise_book(hTable);//revise
                 }
                 else if (management_operate == 6)
                 { // 退出系统
@@ -128,6 +164,6 @@ int main()
         }
     }
 
-    remove_hash(hTable);
+    // remove_hash(hTable);
     return 0;
 }
