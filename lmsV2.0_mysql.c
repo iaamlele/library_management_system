@@ -541,3 +541,134 @@ int inquire_book() {
 
 
 }
+
+int revise_book_op() {
+    int input;
+    printf("**********************\n");
+    printf("你要修改图书哪些信息：\n");
+    printf("1.ISBN\n");
+    printf("2.BNAME-书名\n");
+    printf("3.BCategory-图书类别\n");
+    printf("4.Price-图书价格\n");
+    printf("5.Bcount-图书数量\n");
+    printf("6.PubDate-出版时间\n");
+    printf("7.Author-作者\n");
+    printf("8.PubComp-出版社\n");
+    printf("**********************\n");
+    if (scanf("%d", &input))
+    {
+        return input;
+    }
+    else
+    {
+        clear_input_buffer();
+        return 0;
+    }
+}
+
+int revise_book() {
+    int isbn;
+    int selection;
+
+    printf("请输入你要修改的图书ISBN：\n");
+    if(scanf("%d", &isbn) != 1) {
+        printf("ISBN输入错误，请输入一个数字\n");
+        clear_input_buffer();
+        return 0;
+    }
+
+    selection = revise_book_op();
+    MYSQL *con = mysql_init(NULL);
+    if(con ==NULL) {
+        finish_with_error(con);
+        return 0;
+    }
+
+    if(mysql_real_connect(con, "localhost", "test", "1352963880Cl@", "new_schema", 0, NULL, 0) == NULL) {
+        finish_with_error(con);
+        return 0;
+    }
+
+    char query[512];
+    char revise_after[45];
+        
+    switch (selection)
+    {
+        case 1:
+            printf("你要将该书ISBN修改为：\n");
+            if(scanf("%s"    , revise_after) != 1) {
+                return 0;
+            }else {
+                snprintf(query, sizeof(query), "UPDATE `new_schema`.`book` SET `ISBN` = '%s' WHERE (`ISBN` = '%d')", revise_after, isbn);
+                break;
+            }
+        case 2:
+            printf("你要将该书名修改为：\n");
+            if(scanf("%s", revise_after) != 1) {
+                return 0;
+            }else {
+                snprintf(query, sizeof(query), "UPDATE `new_schema`.`book` SET `BName` = '%s' WHERE (`ISBN` = '%d')", revise_after, isbn);
+                break;
+            }
+        case 3:
+            printf("你要将该书类别修改为：\n");
+            if(scanf("%s", revise_after) != 1) {
+                return 0;
+            }else {
+                snprintf(query, sizeof(query), "UPDATE `new_schema`.`book` SET `BCategory` = '%s' WHERE (`ISBN` = '%d')", revise_after, isbn);
+                break;
+            }
+        case 4:
+            printf("你要将该书价格修改为：\n");
+            if(scanf("%s", revise_after) != 1) {
+                return 0;
+            }else {
+                snprintf(query, sizeof(query), "UPDATE `new_schema`.`book` SET `Price` = '%s' WHERE (`ISBN` = '%d')", revise_after, isbn);
+                break;
+            }
+        case 5:
+            printf("你要将该书数量修改为：\n");
+            if(scanf("%s", revise_after) != 1) {
+                return 0;
+            }else {
+                snprintf(query, sizeof(query), "UPDATE `new_schema`.`book` SET `Bcount` = '%s' WHERE (`ISBN` = '%d')", revise_after, isbn);
+                break;
+            }
+        case 6:
+            printf("你要将该书出版时间修改为：\n");
+            if(scanf("%s", revise_after) != 1) {
+                return 0;
+            }else {
+                snprintf(query, sizeof(query), "UPDATE `new_schema`.`book` SET `PubDate` = '%s' WHERE (`ISBN` = '%d')", revise_after, isbn);
+                break;
+            }
+        case 7:
+            printf("你要将该书作者修改为：\n");
+            if(scanf("%s", revise_after) != 1) {
+                return 0;
+            }else {
+                snprintf(query, sizeof(query), "UPDATE `new_schema`.`book` SET `Author` = '%s' WHERE (`ISBN` = '%d')", revise_after, isbn);
+                break;
+            }
+        case 8:
+            printf("你要将该书出版社修改为：\n");
+            if(scanf("%s", revise_after) != 1) {
+                return 0;
+            }else {
+                snprintf(query, sizeof(query), "UPDATE `new_schema`.`book` SET `PubComp` = '%s' WHERE (`ISBN` = '%d')", revise_after, isbn);
+                break;
+            }
+        default:
+            return 0;
+    }
+    
+    if(mysql_query(con, query)) {
+        finish_with_error(con);
+        return 0;
+    }
+    mysql_close(con);
+
+    return 1; 
+    
+
+}

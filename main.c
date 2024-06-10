@@ -145,6 +145,11 @@ int main()
                 else if (management_operate == 5)
                 { // 修改图书
                     printf("修改图书\n");
+                    if(revise_book()) {
+                        printf("修改成功\n");
+                    }else {
+                        printf("修改失败\n");
+                    }
                     // administrator_revise_book(hTable);//revise
                 }
                 else if (management_operate == 6)
