@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <pthread.h>
 
 typedef void (*task_func)(void*);
@@ -24,7 +25,7 @@ void init_queue(TaskQueue queue) {
 }
 
 void enqueue(TaskQueue queue, task_func func, void *arg) {
-    Task task = (Task *)malloc(sizeof(struct task));
+    Task task = (Task)malloc(sizeof(struct task));
     task->func = func;
     task->arg = arg;
     task->next = NULL;
@@ -70,37 +71,37 @@ void event_loop(TaskQueue queue) {
     }
 }
 
-
-//添加异步任务
 void async_task(void *arg) {
     int *num = (int*) arg;
     printf("Async Task Executed with arg: %d\n", *num);
 }
 
 void* add_async_task(void *arg) {
-    TaskQueue *queue = (TaskQueue*) arg;
+    TaskQueue queue = (TaskQueue) arg;
     int arg1 = 1;
     int arg2 = 2;
 
-    // 模拟异步任务的处理
-    enqueue(queue, async_task, &arg1); // 立即添加任务
-    sleep(2); // 模拟任务延迟
-    enqueue(queue, async_task, &arg2); // 延迟2秒后添加任务
+    enqueue(queue, async_task, &arg1); 
+    sleep(2); 
+    enqueue(queue, async_task, &arg2);
 
     return NULL;
 }
 
 
 int main() {
-    TaskQueue queue;
-    init_queue(&queue);
+    TaskQueue queue = (TaskQueue)malloc(sizeof(struct queue));
+
+    init_queue(queue);
 
     pthread_t adder_thread;
     pthread_create(&adder_thread, NULL, add_async_task, &queue);
 
-    event_loop(&queue);
+    event_loop(queue);
 
     pthread_join(adder_thread, NULL);
+
+    free(queue);
 
     return 0;
 }
