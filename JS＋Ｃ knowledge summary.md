@@ -118,7 +118,63 @@
 > 2.每setTimeout都要创建新线程－＞优化
 > a.线程池，多个线程处理
 > b.两个线程
+> 3.理解阻塞：
+> “阻塞”通常指的是线程因为某种原因无法继续执行，而进入等待状态直到某个条件满足或某个事件发生。例如：
+>     等待I/O操作：线程在读取文件、网络数据或其他I/O操作时，需要等待这些操作完成。在此期间，线程会被阻塞，不能继续执行其他任务。
+>     等待锁：线程试图获取一个已经被其他线程持有的锁时，会被阻塞，直到该锁被释放。
+>     等待条件变量：线程在调用pthread_cond_wait等待条件变量时会被阻塞，直到其他线程调用pthread_cond_signal或pthread_cond_broadcast通知它。
 
+为什么不能用pthread_mutex_trylock();
+> pthread_mutex_trylock 尝试获取锁，但如果锁被其他线程持有（例如 thread1），它会立即返回 EBUSY 而不会阻塞。
+> 如果 pthread_mutex_trylock 成功获取锁，thread2 会调用 dequeue 函数。
+> dequeue 函数会等待直到队列中有任务（如果队列为空），这会导致 thread2 在 pthread_cond_wait 中阻塞。
+
+```
+void *thread2_fun(void *task_queue) {
+    TaskQueue queue  = (TaskQueue)task_queue;
+    printf("thread2\n");
+    while(1) {
+        int err = pthread_mutex_trylock(&queue->mtx);
+        printf("err is: %d", err);
+        if(0 == err) {
+            if(EBUSY != err) {  //头文件errno.h
+                printf("thread22\n");
+                Task task = dequeue(queue);
+                printf("task is: %p\n", task);
+                if(task == NULL) {
+                    continue;
+                }
+                printf("thread222\n");
+                task->func(task->arg);
+                printf("thread2222\n");
+                free(task);
+            }
+        }
+        
+    }
+    return NULL;
+}
+```
+为什么线程无法正确输出－＞互斥锁
+thread2_fun中dequeue位于互斥锁中间，如果dequeue中也有互斥锁，于是出现错误．．
+```
+void *thread2_fun(void *task_queue) {
+    TaskQueue queue  = (TaskQueue)task_queue;
+    while(1) {
+        pthread_mutex_lock(&queue->mtx);
+        Task task = dequeue(queue);
+        if(task == NULL) {
+            pthread_mutex_unlock(&queue->mtx);
+            continue;
+        }
+        pthread_mutex_unlock(&queue->mtx);
+
+        task->func(task->arg);
+        free(task);        
+    }
+    return NULL;
+}
+```
 ### pthread
 > 线程管理
 >     pthread_create: 创建一个新的线程
@@ -170,7 +226,7 @@
 
 #### 互斥锁的使用
 （来自：[https://blog.csdn.net/z_muyangren/article/details/105398871](https://blog.csdn.net/z_muyangren/article/details/105398871)）
-##### 1.创建互斥锁： thread_mutex_t mtx;
+##### 1.创建互斥锁： pthread_mutex_t mtx;
 ##### 2.初始化互斥锁： pthread_mutex_init(&mtx, NULL); 
 ##### 3.获取互斥锁： 	
 a.阻塞调用： pthread_mutex_lock(&mtx);
@@ -212,6 +268,7 @@ struct timespec
 ##### 4.释放互斥锁
 pthread_mutex_unlock(&mtx);
 **获取和释放是一对，必须成对出现**
+**malloc与free是一对，必须成对出现**
 ##### 5.销毁线程锁
 pthread_mutex_destroy(&mtx)
 ```
