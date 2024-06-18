@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <time.h>
+#include <unistd.h>
 
 
 typedef void (*func_ptr)(void *);
@@ -13,7 +14,7 @@ typedef struct task {
 } *Task;
 
 typedef struct settimeout_task {
-    int time;
+    time_t time;
     int begin_time;
     func_ptr func;
     void *arg;
@@ -25,6 +26,8 @@ typedef struct settimeout_list {
     struct settimeout_task *head;
     struct settimeout_task *tail;
     int length;
+    pthread_mutex_t mtx;
+    pthread_cond_t cond;
 } *SetTimeout_List;
 
 typedef struct queue {
@@ -41,23 +44,7 @@ SetTimeout_List create_list() {
     return my_list;
 }
 
-void push_list(SetTimeout_List list, int time, int begin_time, func_ptr func, void *arg) {
-    SetTimeout_Task task = (SetTimeout_Task)malloc(sizeof(struct settimeout_task));
-    if(task == NULL) {
-        return;
-    }
-
-    task->time = time;
-    task->begin_time = begin_time;
-    task->func = func;
-    task->arg = arg;
-    task->next = NULL;
-
-    if(list == NULL) {
-        free(task);
-        return;
-    }
-
+void push_list(SetTimeout_List list, SetTimeout_Task task) {
     if(list->length == 0) {
         list->head = list->tail = task;
     }else {
@@ -70,34 +57,36 @@ void push_list(SetTimeout_List list, int time, int begin_time, func_ptr func, vo
 
 
 SetTimeout_Task setTimeout_list_check(SetTimeout_List list) {
-    
-    while(1) {
+    pthread_mutex_lock(&list->mtx);
+    SetTimeout_Task task = list->head;
+    while(task != NULL) {
         if(list->head == NULL) {
             continue;
         }
-
-        SetTimeout_Task task = list->head;
-        for(int i = 0; i < list->length; i++) {
-            time_t current_time = time(NULL);
-            if(current_time - task->begin_time >= task->time) {
-                // remove task
-                if(task == list->head) {
-                    list->head = list->head->next;
-                }else {
-                    task->last->next = task->next;
-                    task->next->last = task->last;
-                }
-                free(task);
-                return task;
+        time_t current_time = time(NULL);
+        if(current_time - task->begin_time >= task->time) {
+            // remove task
+            if(task == list->head) {
+                list->head = list->head->next;
             }else {
-                task = task->next;
+                task->last->next = task->next;
+                task->next->last = task->last;
             }
-        }
-        free(task);
+
+            if(task == list->tail) {
+                list->tail = task->last;
+            }
+            list->length--;
+            pthread_mutex_unlock(&list->mtx);                
+            return task; //后面会free，所以这里不需要
+        }else {
+            task = task->next;
+        }    
+        pthread_mutex_unlock(&list->mtx);
+        return NULL;
     }
 
 }
-
 
 TaskQueue init_queue() {
     TaskQueue queue = (TaskQueue)malloc(sizeof(struct queue));
@@ -113,18 +102,6 @@ void enqueue(TaskQueue queue, func_ptr func, void *arg) {
     task->arg = arg;
     task->next = NULL;
 
-    pthread_mutex_lock(&queue->mtx);
-    if(queue->first == NULL) {
-        queue->first = queue->last = task;
-    }else {
-        queue->last->next = task;
-        queue->last = queue->last->next;
-    }
-    pthread_cond_signal(&queue->cond);
-    pthread_mutex_unlock(&queue->mtx);
-}
-
-void settimeout_task_enqueue(TaskQueue queue, SetTimeout_Task task) {
     pthread_mutex_lock(&queue->mtx);
     if(queue->first == NULL) {
         queue->first = queue->last = task;
@@ -176,21 +153,23 @@ void *thread1_fun(void *task_queue) { //主线程，循环执行队列中任务
     return NULL;
 }
 
-void *thread2_fun(void *task_queue) {
-    TaskQueue queue  = (TaskQueue)task_queue;
+void *thread2_fun(void *args) {
+    SetTimeout_List list = (SetTimeout_List)((void **)args)[0];
+    TaskQueue queue  = (TaskQueue)((void **)args)[1];
+    free(args);
+
     while(1) {
-        pthread_mutex_lock(&queue->mtx);
-        Task task = dequeue(queue);
-        if(task == NULL) {
-            pthread_mutex_unlock(&queue->mtx);
+        SetTimeout_Task task = setTimeout_list_check(list);
+        if(task != NULL) {
+            enqueue(queue, task->func, task->arg);
+            free(task);
+        }else {
             continue;
         }
-        pthread_mutex_unlock(&queue->mtx);
-
-        task->func(task->arg);
-        free(task);        
     }
-    return NULL;
+    
+    pthread_exit(NULL);
+    return NULL; 
 }
 
 pthread_t init_thread1(void *queue) {
@@ -198,9 +177,13 @@ pthread_t init_thread1(void *queue) {
     pthread_create(&thread1, NULL, thread1_fun, (void *)queue);
     return thread1;
 }
-pthread_t init_thread2(void *queue) {
+pthread_t init_thread2(SetTimeout_List list, TaskQueue queue) {
     pthread_t thread2;
-    pthread_create(&thread2, NULL, thread2_fun, (void *)queue);
+    void **args = (void **) malloc(sizeof(void *) * 2);
+    args[0] = list;
+    args[1] = queue;
+
+    pthread_create(&thread2, NULL, thread2_fun, args);
     return thread2;
 }
 
@@ -220,12 +203,29 @@ void destroy_queue_thread_and_list(TaskQueue queue, pthread_t thread1, pthread_t
     free(list);
 }
 
-void setTimeout(func_ptr func, int time) {
+void setTimeout(time_t delay_time, func_ptr func, void *arg, SetTimeout_List list) {
 
+    SetTimeout_Task task = (SetTimeout_Task)malloc(sizeof(struct settimeout_task));
+    task->func = func;
+    task->arg = arg;
+    task->last = task->next = NULL;
+
+    time_t begin_time = time(NULL);
+    task->begin_time = begin_time;
+    task->time = delay_time;
+
+    if(task == NULL) {
+        return;
+    }
+
+    if(list == NULL) {
+        free(task);
+        return;
+    }
+    push_list(list, task);
 }
 
 int main() {
-    // 主线程逻辑后面写一个loop()，一直死循环执行队列，有一个线程专门判断定时器的延迟什么时候完成
     TaskQueue queue = init_queue();
     SetTimeout_List list = create_list();
 
@@ -234,14 +234,13 @@ int main() {
     enqueue(queue, my_func1, &arg1);
     enqueue(queue, my_func1, &arg2);
 
+    int arg3 = 3;
+    setTimeout(2, my_func2, &arg3, list);
+
     pthread_t thread1 = init_thread1((void *)queue);
-    pthread_t thread2 = init_thread2((void *)queue);
+    pthread_t thread2 = init_thread2(list, queue);
 
-    //线程２
-    SetTimeout_Task task = setTimeout_list_check(list);
-    settimeout_task_enqueue(queue, task);
-
-    sleep(2);
+    sleep(4);
     destroy_queue_thread_and_list(queue, thread1, thread2, list);
 
     return 0;
