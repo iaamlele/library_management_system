@@ -225,6 +225,10 @@ void setTimeout(time_t delay_time, func_ptr func, void *arg, SetTimeout_List lis
     push_list(list, task);
 }
 
+void init_model() {
+    
+}
+
 int main() {
     TaskQueue queue = init_queue();
     SetTimeout_List list = create_list();
