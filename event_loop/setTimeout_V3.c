@@ -37,6 +37,13 @@ typedef struct queue {
     pthread_cond_t cond;
 } *TaskQueue;
 
+typedef struct ev_model {
+    TaskQueue queue;
+    SetTimeout_List list;
+    pthread_t thread1;
+    pthread_t thread2;
+} *EV_MODEL;
+
 SetTimeout_List create_list() {
     SetTimeout_List my_list = (SetTimeout_List)malloc(sizeof(struct settimeout_list));
     my_list->head = my_list->tail = NULL;
@@ -225,27 +232,33 @@ void setTimeout(time_t delay_time, func_ptr func, void *arg, SetTimeout_List lis
     push_list(list, task);
 }
 
-void init_model() {
-    
+EV_MODEL init_model() {
+    EV_MODEL model = (EV_MODEL)malloc(sizeof(struct ev_model));
+    model->queue = init_queue();
+    model->list= create_list();
+
+    model->thread1 = init_thread1((void *)model->queue);
+    model->thread2 = init_thread2(model->list, model->queue);
+
+    return model;
 }
 
 int main() {
-    TaskQueue queue = init_queue();
-    SetTimeout_List list = create_list();
+    EV_MODEL model = init_model();
+    
 
     int arg1 = 1;
     int arg2 = 2;
-    enqueue(queue, my_func1, &arg1);
-    enqueue(queue, my_func1, &arg2);
+    enqueue(model->queue, my_func1, &arg1);
+    enqueue(model->queue, my_func1, &arg2);
 
     int arg3 = 3;
-    setTimeout(2, my_func2, &arg3, list);
+    setTimeout(2, my_func2, &arg3, model->list);
 
-    pthread_t thread1 = init_thread1((void *)queue);
-    pthread_t thread2 = init_thread2(list, queue);
+    
 
     sleep(4);
-    destroy_queue_thread_and_list(queue, thread1, thread2, list);
+    destroy_queue_thread_and_list(model->queue, model->thread1, model->thread2, model->list);
 
     return 0;
 }
