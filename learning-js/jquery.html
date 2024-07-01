@@ -3,6 +3,14 @@
     <head>
         <meta charset="utf-8">
         <title>Reproduce jQuery using C language</title>
+        <script src="jquery-3.7.1.min.js"></script>
+        <script>
+            $(document).ready(function(){
+                $("button").click(function(){
+                    $("p").hide();
+                });
+            });
+        </script>
     </head>
     
     <body>
@@ -11,6 +19,8 @@
             <h1>这是第一个h1标题</h1>
             <p>这是第一个段落。</p>
         </div>
+        <button>button</button>
+        <p>段落～～～</p>
         <div id="second">
             <div class="second-class1">
                 <h2>这是第二个h1标题</h2>
