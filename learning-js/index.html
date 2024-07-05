@@ -4,34 +4,30 @@
         <meta charset="utf-8">
         <title>Reproduce jQuery using C language</title>
         <script src="jquery-3.7.1.min.js"></script>
-        <script>
+        <script src="jquery.js"></script>
+        <!-- jquery测试 -->
+        <!-- <script>
             $(document).ready(function(){
                 $("button").click(function(){
                     $("p").hide();
                 });
             });
-        </script>
+        </script> -->
     </head>
     
     <body>
-        <script src="jquery.js"></script>
+        
         <div id="first">
             <h1>这是第一个h1标题</h1>
-            <p>这是第一个段落。</p>
+            <button id="button1">button</button>
+            <p id="first-id">这是第一个段落。</p>
         </div>
-        <button>button</button>
-        <p>段落～～～</p>
+       
         <div id="second">
             <div class="second-class1">
-                <h2>这是第二个h1标题</h2>
+                <h2>这是第一个h2标题</h2>
                 <p>这是第二个段落。</p>
             </div>
         </div>
-
-        <ul id="fruits">
-            <li class="apple">Apple</li>
-            <li class="orange">Orange</li>
-            <li class="pear">Pear</li>
-          </ul>
     </body>
 </html>
