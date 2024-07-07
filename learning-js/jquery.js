@@ -1,7 +1,8 @@
 // 1.js怎么与网页连接->把js放在html中
 // 2.js怎么获取网页中的元素->js HTML DOM->jsdom  这样不方便->浏览器
 // 3.实现显示和隐藏功能
-module.exports
+export default click_hide_addListener;
+
 //隐藏和显示功能
 function click_hide(element) {
     const hide_element = document.querySelector(element);
@@ -15,3 +16,4 @@ function click_hide_addListener(elem1, elem2) {
         click_hide(elem2);
     });
 }
+
