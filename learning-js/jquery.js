@@ -1,19 +1,47 @@
 // 1.js怎么与网页连接->把js放在html中
 // 2.js怎么获取网页中的元素->js HTML DOM->jsdom  这样不方便->浏览器
 // 3.实现显示和隐藏功能
-export default click_hide_addListener;
 
-//隐藏和显示功能
-function click_hide(element) {
+
+//hide  jquery:$(selector).hide(speed,callback);    speed，hide方式，callback怎么实现？
+export function click_hide(element) {
     const hide_element = document.querySelector(element);
-    hide_element.style.visibility = 'hidden';
-    console.log(hide_element.style.visibility);
+    if(hide_element === "") {
+        console.log("Failed to get element");
+    }else {
+        hide_element.style.visibility = 'hidden';
+    }
+    
 }
 
-function click_hide_addListener(elem1, elem2) {
+export function click_hide_addListener(elem1, elem2) {
     const element1 = document.querySelector(elem1);
-    element1.addEventListener("click", function() {
-        click_hide(elem2);
-    });
+    if(element1 === "") {
+        console.log("Failed to get element");
+    }else {
+        element1.addEventListener("click", function() {
+            click_hide(elem2);
+        });
+    }
 }
 
+//show
+export function click_show(element) {
+    const show_element = document.querySelector(element);
+    if(show_element === "") {
+        console.log("Failed to get element");
+    }else {
+        show_element.style.visibility = 'visible';
+    }    
+}
+
+export function click_show_addListener(elem1, elem2) {
+    const element1 = document.querySelector(elem1);
+    if(element1 === "") {
+        console.log("Failed to get element");
+    }else {
+        element1.addEventListener("click", function() {
+            click_show(elem2);
+        });
+    }    
+}

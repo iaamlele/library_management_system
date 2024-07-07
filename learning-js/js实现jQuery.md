@@ -119,7 +119,24 @@ npm是一个与Node.js一并下载和捆绑的包管理器。其命令行（CLI�
 ## 13.需要什么软件来构建一个网站
 需求：创建和编辑网页;上传文件到你的web服务器;浏览你的网站
 ## 14.使用Github Pages实时发布网站代码
-15.
+## 15.异步js
+**同步编程-**>很可能遇到一个耗时的同步函数，导致程序阻塞不动
+
+**事件处理程序**->事件处理程序实际上就是异步编程的一种形式：你提供的函数（事件处理程序）将在事件发生时被调用（而不是立即被调用）。
+
+**回调**->事件处理程序是一种特殊类型的回调函数。而回调函数则是一个被传递到另一个函数中的会在适当的时候被调用的函数。正如我们刚刚所看到的：回调函数曾经是 JavaScript 中实现异步函数的主要方式。但是，当回调函数本身需要调用其他同样接受回调函数的函数时，基于回调的代码会变得难以理解，在一些地方这被称为“回调地狱”或“厄运金字塔”。
+
+实上，JavaScript 中异步编程的基础是 Promise
+## 16.异步与eventloop，以及eventloop与setTimeout的关系
+事件循环是JavaScript处理异步编程的核心机制。它负责协调代码执行、事件和回调函数的调度。
+
+setTimeout是JavaScript中用于调度异步任务的一个函数。它接受两个参数：一个回调函数和一个延迟时间（以毫秒为单位）。在指定的时间后，回调函数会被加入消息队列。
+
+JavaScript通过事件循环模型管理异步操作。setTimeout将任务调度到消息队列中，并在指定时间后执行。事件循环确保在处理异步任务时，主线程能够继续执行其他任务，从而保持应用的响应性。
+
+
+
+js异步编程-》什么是Promise
 # 二 代码积累
 ## 1.文档加载时候先运行这段
 ```
@@ -130,7 +147,7 @@ window.onload = () => {
 ## 2.<script>在HTML页面中放置的位置
 浏览器会按照 <script> 元素在页面中出现的先后顺序，对它们依次进行解析
 
-包含import的文件test.js和包含export的文件jquery.js的在script导入时，在HTML中只需要有<script type="module" src="test.js"></script>，而无需把jquery.js也显式导入。原因：显式导入会导致jquery.js在浏览器中加载两次，一次是通过显式引入，另一次是通过test.js中的import语句。这种情况下，模块可能会被执行两次，导致意想不到的结果。
+包含import的文件test.js和包含export的文件jquery.js的在script导入时，在HTML中只需要有<script type="module" src="test.js"></script>，而无需把jquery.js也显式导入。原因：只需要在HTML中引入顶级模块test.js，浏览器会自动解析所有依赖关系。显式导入会导致jquery.js在浏览器中加载两次，一次是通过显式引入，另一次是通过test.js中的import语句。这种情况下，模块可能会被执行两次，导致意想不到的结果。
 
 如何实现边解析页面边下载js：
 <script>中增加属性**async**：表示**异步解析脚本**，即表示当前脚本不必等待其他脚本，也不必阻挡文档呈现。（区别于 defer，异步脚本不能按照在页面中的出现的顺序执行）
@@ -148,7 +165,50 @@ window.onload = () => {
 1.使用es时，export与import都要位于模块顶部
 2.type="module"：<script type="module" src="jquery.js"></script>
 原因：可以使用import和export关键字在模块之间共享代码。
+## 4.js中批量导出函数的方法
+1.命名导出
+```
+export function click_hide_addListener() {
+    // Function implementation
+}
+```
+2.批量导出与导入：
+```
+导出：export { click_hide_addListener, anotherFunction };
 
+导入：import { click_hide_addListener, anotherFunction } from "./jquery.js";
+```
+3.创建一个包含所有函数的对象并默认导出改对象
+```
+// jquery.js
+function click_hide_addListener() {
+    // Function implementation
+}
+
+function anotherFunction() {
+    // Another function implementation
+}
+
+// 其他函数的实现
+
+const exportedFunctions = {
+    click_hide_addListener,
+    anotherFunction,
+    // 其他函数
+};
+
+export default exportedFunctions;
+
+```
+
+## 5.当代码全部调试完毕，会跳转到211.js这个文件继续
+而不会调试结束，原因：
+1. 异步代码
+如果代码中有异步操作（如setTimeout、setInterval、Promise、async/await、AJAX请求等），这些操作会在主线程的代码执行完毕后继续运行。
+2. 事件监听器
+如果代码中注册了事件监听器（如click、mousemove等），这些监听器会在事件触发时执行。
+3. 外部库
+有些外部库会在后台执行一些代码，尤其是大型框架或库，如React、Vue、jQuery等。这些库可能会设置监听器或进行周期性检查。
 # 三 遇到的问题
 ## 1.DOM只有在浏览器中才能使用
 在vscode中不能通过这种方式获取html元素：let x = document.getElementById("first");会出现报错：ReferenceError: document is not defined
