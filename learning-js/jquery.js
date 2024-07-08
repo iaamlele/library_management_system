@@ -45,3 +45,18 @@ export function click_show_addListener(elem1, elem2) {
         });
     }    
 }
+
+//toggle
+export function toggle_addListener(elem1, elem2) {
+    const element1 = document.querySelector(elem1);
+    if(element1 === "") {
+        console.log("Failed to get element");
+    }else {
+        const is_hide = document.querySelector(elem2).style.visibility;
+        if(is_hide === "hide" || is_hide === "") {
+            click_show(elem2);
+        }else if(is_hide === "visible") {
+            click_hide(elem2);
+        }
+    }
+}
