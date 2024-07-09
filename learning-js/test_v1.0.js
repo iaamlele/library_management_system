@@ -1,4 +1,4 @@
-import {click_hide_addListener, click_hide, click_show_addListener, toggle_addListener } from "./jquery.js";
+import {click_hide_addListener, click_hide, click_show_addListener, toggle_addListener } from "./jquery_V1.0.js";
 // 确保所有资源加载完成后执行脚本
 window.onload = () => {
     // hide
