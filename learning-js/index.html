@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Reproduce jQuery using C language</title>
-        
-        <!-- jquery测试 -->
-        <!-- <script>
+
+<head>
+    <meta charset="utf-8">
+    <title>Reproduce jQuery using C language</title>
+
+    <!-- jquery测试 -->
+    <!-- <script>
             $(document).ready(function(){
                 $("button").click(function(){
                     // $("p").hide(1000, "swing", function() {
@@ -15,35 +16,135 @@
                 });
             });
         </script> -->
-    </head>
-    
-    <body>
-        
-        <div id="first">
-            <h1>h1:测试hide和show</h1>
-            <button id="button1">hide</button>
-            <button id="button2">show</button>
-            <button id="button3">hide/show</button>
-            <p id="first-id">这是第一个段落。</p>
-        </div>
-       
-        <div id="second">
-            <div class="second-class1">
-                <h2 id="first-h2">这是第一个h2标题</h2>
-                <p id="second-p">这是第二个段落。</p>
-            </div>
-        </div>
+</head>
 
-        <script>
-            // 不是实现jquery的功能，而是完全复刻jquery，包括$符号等
-            //思路：创建$对象
-            
-        </script>
-        <!-- <script type="module" src="test.js"></script> -->
-        <script
-			  src="https://code.jquery.com/jquery-3.7.1.js"
-			  integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-			  crossorigin="anonymous"></script>
+<body>
+
+    <div id="first">
+        <h1>h1:测试hide和show</h1>
+        <button id="button1">hide</button>
+        <button id="button2">show</button>
+        <button id="button3">hide/show</button>
+        <p id="first-id">这是第一个段落。</p>
+    </div>
+
+    <div id="second">
+        <div class="second-class1">
+            <h2 id="first-h2">这是第一个h2标题</h2>
+            <p id="second-p">这是第二个段落。</p>
+        </div>
+    </div>
+
+    <script>
+        // DFS
+
+        // BFS
+
+        //不是实现jquery的功能，而是完全复刻jquery，包括$符号等
+        //思路：创建$对象
+        //只有方法才可以$()，对象只能.来访问方法/属性 ->方法中包含对象 
+        // ->创造一个原型对象obj，有很多方法，$这个方法中包含obj对象，也就包含其中方法
+
+        //方法一：使用对象字面量创建对象$
+        // const $ = {
+        //     hide: function (arg) {
+        //         console.log(arg);
+        //     },
+        //     show: function (arg) {
+        //         console.log(arg);
+        //     }
+        // };
+
+        // 方法二：使用函数构造对象  对象.属性/方法   $()是函数调用，怎么是对象？
+        // function $(arg) {
+        //     console.log(this);
+        //     console.log(arg);
+
+        //     function hide(arg) {
+        //         console.log("hide " + arg);
+        //     }
+        //     function show(arg) {
+        //         console.log("show " + arg);
+        //     }
+        // }
+        // $("p");
+
+        // 这种方法返回的对象和函数没有关系，此对象随函数调用而创建，无法链式调用
+        // const $ = function() {
+        //     return {
+        //         hide() {
+        //             console.log("hide");
+        //         }
+        //     }
+        // }
+
+        //只有Function类型的对象可以使用()调用->创建一个Function类型的对象->
+        // 1.直接在此对象中添加属性和方法，暂时不知道怎么达到链式调用效果->返回一个对象，;
+        // 2.创建该函数实例，通过向其原型增加属性和方法，使得此函数继承这些属性/方法，方法返回obj，可以达到链式调用的效果，但是实例是对象，对象又不能使用()调用，只有Function函数才能这样调用。
         
-    </body>
+        const jq = {
+            elements : [],
+            hide() {
+                const elem = this.elements[0];
+                for(let i = 0; i < elem.length; i++) {
+                    elem.item(i).style.visibility = 'hidden';
+                }
+                return this;
+            }, 
+            show() {
+                const elem = this.elements[0];
+                for(let i = 0; i < elem.length; i++) {
+                    elem.item(i).style.visibility = 'visible';
+                }
+                return this;
+            }
+        }
+        function $(arg) {
+            console.log(this);
+            jq.elements = [];
+            if(typeof arg === "string") {
+                //遍历DOM树，DFS？
+                const arg_class = new RegExp("^#.*");
+                const arg_id = new RegExp("^\\..*");
+                const arg_tag = new RegExp("^[a-zA-Z][a-zA-z0-9]*");
+                if(arg_class.test(arg)) {
+                    console.log("class");
+                }else if(arg_id.test(arg)) {
+                    console.log("id");
+                    const ids = document.getElementById(arg);
+                    jq.elements.push(ids);
+                }else if(arg_tag.test(arg)) {
+                    const tags = document.getElementsByTagName(arg);
+                    jq.elements.push(tags);
+                }else {
+                    console.log("Error label!");
+                }
+            }
+            return jq;
+        }
+        $("buttonq").hide();
+       
+
+        
+        // jquery.prototype.hide = function() {
+        //     console.log("hide");
+        //     return this;
+        // }
+        
+        // jquery.prototype.show = function() {
+        //     console.log(this);
+        //     console.log("show");
+        //     return this;
+        // }
+        // const $ = new jquery();
+        // $("p");
+        // $.hide().show();
+        
+    </script>
+    <!-- <script type="module" src="test.js"></script> -->
+    <!-- <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script> -->
+
+</body>
+
 </html>
