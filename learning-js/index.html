@@ -25,13 +25,13 @@
         <button id="button1">hide</button>
         <button id="button2">show</button>
         <button id="button3">hide/show</button>
-        <p id="first-id">这是第一个段落。</p>
+        <p id="first-id" class="class test">这是第一个段落。</p>
     </div>
 
     <div id="second">
         <div class="second-class1">
             <h2 id="first-h2">这是第一个h2标题</h2>
-            <p id="second-p">这是第二个段落。</p>
+            <p id="second-p" class="class test">这是第二个段落。</p>
         </div>
     </div>
 
@@ -81,48 +81,66 @@
         //只有Function类型的对象可以使用()调用->创建一个Function类型的对象->
         // 1.直接在此对象中添加属性和方法，暂时不知道怎么达到链式调用效果->返回一个对象，;
         // 2.创建该函数实例，通过向其原型增加属性和方法，使得此函数继承这些属性/方法，方法返回obj，可以达到链式调用的效果，但是实例是对象，对象又不能使用()调用，只有Function函数才能这样调用。
-        
-        const jq = {
-            elements : [],
-            hide() {
-                const elem = this.elements[0];
-                for(let i = 0; i < elem.length; i++) {
-                    elem.item(i).style.visibility = 'hidden';
-                }
-                return this;
-            }, 
-            show() {
-                const elem = this.elements[0];
-                for(let i = 0; i < elem.length; i++) {
-                    elem.item(i).style.visibility = 'visible';
+        // document.getElementById("button1");
+
+
+        // 这样写有函数副作用！
+    
+        function $(arg) {
+            elements = [];
+
+            function hide() {
+                const elem = elements[0];
+                const is_id = elements[1];
+                if(is_id === 1) {
+                    elem.style.visibility = 'hidden';
+                }else {
+                    for(let i = 0; i < elem.length; i++) {
+                        elem.item(i).style.visibility = 'hidden';
+                    }
                 }
                 return this;
             }
-        }
-        function $(arg) {
-            console.log(this);
-            jq.elements = [];
+
+            function show() {
+                const elem = elements[0];
+                const is_id = elements[1];
+                if(is_id === 1) {
+                    elem.style.visibility = 'hidden';
+                }else {
+                    for(let i = 0; i < elem.length; i++) {
+                        elem.item(i).style.visibility = 'visible';
+                    }
+                }
+                return this;
+            }
+
             if(typeof arg === "string") {
                 //遍历DOM树，DFS？
                 const arg_class = new RegExp("^#.*");
                 const arg_id = new RegExp("^\\..*");
                 const arg_tag = new RegExp("^[a-zA-Z][a-zA-z0-9]*");
                 if(arg_class.test(arg)) {
-                    console.log("class");
+                    const classes = document.getElementsByClassName(arg.slice(1));
+                    elements.push(classes);
                 }else if(arg_id.test(arg)) {
-                    console.log("id");
-                    const ids = document.getElementById(arg);
-                    jq.elements.push(ids);
+                    const ids = document.getElementById(arg.slice(1));
+                    elements.push(ids);
+                    elements[1] = 1;
                 }else if(arg_tag.test(arg)) {
                     const tags = document.getElementsByTagName(arg);
-                    jq.elements.push(tags);
+                    elements.push(tags);
                 }else {
                     console.log("Error label!");
                 }
             }
-            return jq;
+
+            return {
+                hide: hide,
+                show: show
+            }
         }
-        $("buttonq").hide();
+        $("#class test").hide().show();
        
 
         
