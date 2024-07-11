@@ -6,16 +6,18 @@
     <title>Reproduce jQuery using C language</title>
 
     <!-- jquery测试 -->
-    <!-- <script>
+    <!-- <script src="https://code.jquery.com/jquery-3.7.1.js"
+    integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script>
             $(document).ready(function(){
                 $("button").click(function(){
                     // $("p").hide(1000, "swing", function() {
                     //     $("#first-h2").hide(1000, "linear");
                     // }); //第二个参数：jQuery自身提供"linear" 和 "swing"
-                    $("p").fadeIn();
+                    $("p").fadeOut();
                 });
             });
-        </script> -->
+    </script> -->
 </head>
 
 <body>
@@ -36,10 +38,6 @@
     </div>
 
     <script>
-        // DFS
-
-        // BFS
-
         //不是实现jquery的功能，而是完全复刻jquery，包括$符号等
         //思路：创建$对象
         //只有方法才可以$()，对象只能.来访问方法/属性 ->方法中包含对象 
@@ -84,8 +82,8 @@
         // document.getElementById("button1");
 
 
-        // 这样写有函数副作用！
-    
+        // 避免函数副作用！
+
         function $(arg) {
             elements = [];
 
@@ -116,7 +114,6 @@
             }
 
             if(typeof arg === "string") {
-                //遍历DOM树，DFS？
                 const arg_class = new RegExp("^#.*");
                 const arg_id = new RegExp("^\\..*");
                 const arg_tag = new RegExp("^[a-zA-Z][a-zA-z0-9]*");
@@ -131,37 +128,25 @@
                     const tags = document.getElementsByTagName(arg);
                     elements.push(tags);
                 }else {
-                    console.log("Error label!");
+                    this.arg = arg;
+                    elements.push(arg);
                 }
+            }else {
+                console.log("input not string");
             }
 
             return {
-                hide: hide,
-                show: show
+                hide,
+                show
             }
         }
-        $("#class test").hide().show();
-       
 
-        
-        // jquery.prototype.hide = function() {
-        //     console.log("hide");
-        //     return this;
-        // }
-        
-        // jquery.prototype.show = function() {
-        //     console.log(this);
-        //     console.log("show");
-        //     return this;
-        // }
-        // const $ = new jquery();
-        // $("p");
-        // $.hide().show();
+        $("#class test").hide().show();
         
     </script>
+
     <!-- <script type="module" src="test.js"></script> -->
-    <!-- <script src="https://code.jquery.com/jquery-3.7.1.js"
-        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script> -->
+    
 
 </body>
 
