@@ -22,11 +22,5 @@ window.onload = () => {
     btn_hide_show.click();
     console.log(document.getElementById("first-id").style.visibility);
 
-
-    // const element = document.getElementById("button3");
-    // console.log(element.style.opacity);
-    // const interval = setInterval(function() {
-        
-    // }, 50);
 };
 

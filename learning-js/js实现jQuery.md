@@ -136,7 +136,98 @@ JavaScript通过事件循环模型管理异步操作。setTimeout将任务调度
 
 
 
-js异步编程-》什么是Promise
+## js异步编程->什么是Promise
+
+## js对象
+## js类
+
+## js构造函数与普通函数区别
+this
+
+
+## js HTML DOM
+DOM HTML
+DOM CSS
+DOM 事件
+DOM EventListener
+DOM 元素
+HTML Collection对象
+NodeList对象
+## js正则表达式->创建，正则表达式，匹配
+
+## js作用域
+
+## 函数副作用
+就是运行完对外部影响了
+详细解释：函数副作用（side effect）是指函数在执行过程中除了返回值之外，还对外部状态产生了影响。换句话说，函数在执行时除了计算和返回一个结果外，还对函数外部的变量、数据结构、文件、数据库、外部服务等进行了修改。
+副作用的存在会导致函数不再是纯函数。纯函数是指对于相同的输入永远会有相同的输出，并且没有任何副作用。
+
+为什么要关注副作用
+    可测试性：有副作用的函数难以进行单元测试，因为你需要模拟和检查外部状态的变化。
+    可预测性：纯函数总是给定相同的输入返回相同的输出，没有副作用，因此更易预测和理解。
+    可复用性：纯函数因为不依赖外部状态，因此更容易在不同的上下文中复用。
+代码改进建议
+    1.避免修改全局对象:
+        使用局部变量存储选择器匹配结果。
+        避免在函数中直接修改外部对象的状态。
+    2.减少对 DOM 的直接操作:
+        使用函数返回新的状态，而不是直接修改 DOM。
+    3.保持函数纯净:
+        确保函数仅依赖其输入参数并返回结果，而不修改外部状态。
+
+## window.onload和$(document).ready()的区别
+$(document).ready()：
+**触发时间: **当 DOM 树已构建完毕，但外部资源（如图像、样式表等）可能尚未加载完成。
+window.onload：
+**触发时间: **当页面上的所有资源（包括 DOM、图像、样式表等）都已完全加载。
+
+每个事件的顺序将总结如下：
+1.HTML Parsing: 浏览器开始解析 HTML 文件，并逐渐构建 DOM 树。
+2.$(document).ready(): 当 DOM 树已构建完毕时触发。这意味着页面的 HTML 已经完全加载并被解析，但图像和其他资源可能尚未加载。
+3.Images and Other Resources Loading: 浏览器继续加载页面中的其他资源（如图像、样式表等）。
+4.window.onload: 当页面上的所有资源（包括图像、样式表等）都已完全加载后触发。
+
+$(window).load 最后执行。如果页面加载大量内容，则可能需要一些时间来处理页面。
+因此，我认为考虑用户友好性时，使用 $(document).ready() 更好。
+
+## 立即调用函数表达式
+定义自执行匿名函数是在定义后立即执行的 [JavaScript](https://developer.mozilla.org/zh-CN/docs/Glossary/JavaScript)[函数](https://developer.mozilla.org/zh-CN/docs/Glossary/Function)，也被称作[立即调用函数表达式](https://developer.mozilla.org/zh-CN/docs/Glossary/IIFE)（IIFE）。
+```
+()();
+举例：
+1.(function() {
+})();
+2.(()=> {
+})();
+```
+## document.addEventListener('DOMContentLoaded', f, false);
+参数1：事件类型
+参数2：指定当事件触发时要执行的函数。
+参数3：选项（useCapture 或 options）
+    类型：boolean 或 object
+    作用：指定事件是否在捕获阶段执行（如果为 boolean），或是包含多个选项的对象（如果为 object）。
+    说明：
+        如果是 boolean 类型，值为 true 时表示事件在捕获阶段执行，false 表示事件在冒泡阶段执行。
+        如果是 object 类型，可以包含以下选项：
+            capture：布尔值，表示事件处理程序是否在捕获阶段执行（与 boolean 类型的作用相同）。
+            once：布尔值，表示事件处理程序在第一次调用后是否自动移除。
+            passive：布尔值，表示事件处理程序永远不会调用 preventDefault()。
+
+**默认情况下，第三个参数为 false，即事件处理程序在冒泡阶段执行**。
+
+**事件传播的3个阶段：**
+1.**捕获阶段（Capture Phase）：**
+    事件从 window 对象开始，向下传播到目标元素。这一阶段也称为“事件捕获阶段”。
+    在这个阶段，如果事件处理程序被添加到某个父元素，并且 useCapture 参数为 true，事件处理程序会在捕获阶段执行。
+
+2.**目标阶段（Target Phase）：**
+    事件在目标元素上触发。
+    在目标阶段，事件处理程序会在目标元素上被触发，不论是通过捕获阶段还是冒泡阶段添加的事件处理程序。
+
+3.**冒泡阶段（Bubbling Phase）：**
+    事件从目标元素开始，向上冒泡到其祖先元素，直到到达 window 对象。这一阶段也称为“事件冒泡阶段”。
+    在这个阶段，如果事件处理程序被添加到某个元素，并且 useCapture 参数为 false（默认值），事件处理程序会在冒泡阶段执行。
+
 # 二 代码积累
 ## 1.文档加载时候先运行这段
 ```
@@ -209,6 +300,11 @@ export default exportedFunctions;
 如果代码中注册了事件监听器（如click、mousemove等），这些监听器会在事件触发时执行。
 3. 外部库
 有些外部库会在后台执行一些代码，尤其是大型框架或库，如React、Vue、jQuery等。这些库可能会设置监听器或进行周期性检查。
+
+## 6.动画制作
+Window：requestAnimationFrame() 方法
+
+cdn(jquery cdn)  分布式的，访问第三方库减少服务器负荷，内网环境用不了
 # 三 遇到的问题
 ## 1.DOM只有在浏览器中才能使用
 在vscode中不能通过这种方式获取html元素：let x = document.getElementById("first");会出现报错：ReferenceError: document is not defined

@@ -113,6 +113,16 @@
                 return this;
             }
 
+            function ready(f) {
+                const elem = elements[0];
+                if(elem === document) {
+                    return document.addEventListener("DOMContentLoaded", f, false);
+                }else {
+                    return null;
+                }
+                
+            }
+
             if(typeof arg === "string") {
                 const arg_class = new RegExp("^#.*");
                 const arg_id = new RegExp("^\\..*");
@@ -127,22 +137,21 @@
                 }else if(arg_tag.test(arg)) {
                     const tags = document.getElementsByTagName(arg);
                     elements.push(tags);
-                }else {
-                    this.arg = arg;
-                    elements.push(arg);
                 }
-            }else {
-                console.log("input not string");
+            }else if(typeof arg === "object") {
+                elements.push(arg);
             }
 
             return {
                 hide,
-                show
+                show,
+                ready
             }
         }
-
-        $("#class test").hide().show();
         
+        $(document).ready(function() {
+            $("#class test").hide().show();
+        });
     </script>
 
     <!-- <script type="module" src="test.js"></script> -->
