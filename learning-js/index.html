@@ -141,13 +141,16 @@
             }else if(typeof arg === "object") {
                 elements.push(arg);
             }
-
+                        
             return {
                 hide,
                 show,
                 ready
             }
         }
+        $.prototype.hide = $().hide;
+        $.prototype.show = $().show;
+        $.prototype.ready = $().ready;
         
         $(document).ready(function() {
             $("#class test").hide().show();
