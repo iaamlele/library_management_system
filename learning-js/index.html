@@ -85,43 +85,7 @@
         // 避免函数副作用！
 
         function $(arg) {
-            elements = [];
-
-            function hide() {
-                const elem = elements[0];
-                const is_id = elements[1];
-                if(is_id === 1) {
-                    elem.style.visibility = 'hidden';
-                }else {
-                    for(let i = 0; i < elem.length; i++) {
-                        elem.item(i).style.visibility = 'hidden';
-                    }
-                }
-                return this;
-            }
-
-            function show() {
-                const elem = elements[0];
-                const is_id = elements[1];
-                if(is_id === 1) {
-                    elem.style.visibility = 'hidden';
-                }else {
-                    for(let i = 0; i < elem.length; i++) {
-                        elem.item(i).style.visibility = 'visible';
-                    }
-                }
-                return this;
-            }
-
-            function ready(f) {
-                const elem = elements[0];
-                if(elem === document) {
-                    return document.addEventListener("DOMContentLoaded", f, false);
-                }else {
-                    return null;
-                }
-                
-            }
+            const elements = [];
 
             if(typeof arg === "string") {
                 const arg_class = new RegExp("^#.*");
@@ -141,19 +105,53 @@
             }else if(typeof arg === "object") {
                 elements.push(arg);
             }
-                        
-            return {
-                hide,
-                show,
-                ready
-            }
+
+            const obj = Object.create($.prototype);
+            obj.elements = elements;
+            return obj;
+            
         }
-        $.prototype.hide = $().hide;
-        $.prototype.show = $().show;
-        $.prototype.ready = $().ready;
+
+        $.prototype.hide = function hide() {
+                const elem = this.elements[0];
+                const is_id = this.elements[1];
+                if(is_id === 1) {
+                    elem.style.visibility = 'hidden';
+                }else {
+                    for(let i = 0; i < elem.length; i++) {
+                        elem.item(i).style.visibility = 'hidden';
+                    }
+                }
+                return this;
+            }
         
+        $.prototype.show = function show() {
+                const elem = this.elements[0];
+                const is_id = this.elements[1];
+                if(is_id === 1) {
+                    elem.style.visibility = 'hidden';
+                }else {
+                    for(let i = 0; i < elem.length; i++) {
+                        elem.item(i).style.visibility = 'visible';
+                    }
+                }
+                return this;
+            }
+
+        $.prototype.ready = function ready(f) {
+                const elem = this.elements[0];
+                if(elem === document) {
+                    return document.addEventListener("DOMContentLoaded", f, false);
+                }else {
+                    return null;
+                }
+                
+            }
+        // console.log($(document));
         $(document).ready(function() {
+            console.log($(document).ready);
             $("#class test").hide().show();
+            console.log($("#class test").ready);
         });
     </script>
 
