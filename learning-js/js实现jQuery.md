@@ -228,6 +228,196 @@ $(window).load 最后执行。如果页面加载大量内容，则可能需要�
     事件从目标元素开始，向上冒泡到其祖先元素，直到到达 window 对象。这一阶段也称为“事件冒泡阶段”。
     在这个阶段，如果事件处理程序被添加到某个元素，并且 useCapture 参数为 false（默认值），事件处理程序会在冒泡阶段执行。
 
+## 调用函数创建新的对象
+> 每次调用函数都会创建新的对象，主要是由于 JavaScript 中函数的作用域和对象的创建机制。以下是详细解释：
+> 1. 函数作用域和变量
+> 每次调用函数时，都会创建一个新的作用域（scope），在这个作用域内声明的变量和定义的函数都是这个作用域的局部变量。这意味着这些变量和函数在函数执行结束后会被销毁，除非被返回或者被其他引用保存。
+> 2. 内部函数的作用域链
+> 内部函数在定义时，会捕获其所在作用域的变量和函数。这使得这些内部函数在函数执行结束后，即使在外部调用，它们依然可以访问这些局部变量和函数。
+> 3. 返回新的对象
+> 当一个函数返回一个对象时，这个对象包含的所有方法和属性都是该函数执行时创建的。每次调用函数时，返回的对象都是一个全新的实例，因为函数的每次执行都会创建一个新的作用域和新的变量。
+
+### 如何使得共享对象方法，而不是每次调用函数都创建一个对象呢？
+这种方法不正确，不能达到目的，因为只要每次$()就会创建一个新的对象，每个新的对象的方法就相互独立。思路：将方法放在共享的原型对象中
+```
+$.prototype.hide = $().hide;
+$.prototype.show = $().show;
+$.prototype.ready = $().ready;
+```
+## FP(Functional Programming)
+## FP语言
+FP（缩写的Functional Programming），是John Backus创立的支持函数级编程范型的编程语言[2]。它允许消去命名变量。 
+在John Backus的一篇图灵奖论文中，描述了FP风格与基于lambda演算的语言有着如何不同：
+    FP系统基于了对叫做泛函形式（functional form）的一组固定的组合形式的利用。它们加上简单的定义，就是从现存函数建造新函数的唯一方式；它们不使用变量或替代（substitution）规则，并且它们成为程序相关的代数的运算操作（operation）。FP系统的所有函数都是一种类型的：它们映射对象到对象之上并总是接受一个单一实际参数（argument）。[2]
+
+具体。。。看不懂啊啊啊。。
+### 函数式编程/泛函编程
+1.主要思想：把计算过程尽量分解成一系列可复用函数的调用
+2.主要特征：函数是“第一等公民”：
+    函数与其他数据类型一样的地位，可以赋值给其他变量，也可以作为函数参数、函数返回值 
+是一种编程范型。简介：函数[头等对象](https://zh.wikipedia.org/wiki/%E5%A4%B4%E7%AD%89%E5%AF%B9%E8%B1%A1)即[头等函数](https://zh.wikipedia.org/wiki/%E5%A4%B4%E7%AD%89%E5%87%BD%E6%95%B0)，这意味着一个函数，既可以作为其它函数的输入参数值，也可以从函数中返回值，被修改或者被分配给一个变量。[λ演算](https://zh.wikipedia.org/wiki/%CE%9B%E6%BC%94%E7%AE%97)是这种范型最重要的基础，λ演算的函数可以接受函数作为输入参数和输出返回值。
+### 图灵的基本思想
+图灵认为满足以下四个部分组成的一台机器就能模拟人类所能进行的任何计算过程：
+### ![1.png](https://cdn.nlark.com/yuque/0/2024/png/26307378/1721115514337-552fa7e6-8107-4b72-9731-775440d24091.png#averageHue=%23f5f5f1&clientId=u7fb7d905-061e-4&from=ui&id=u790e8b80&originHeight=775&originWidth=902&originalType=binary&ratio=1&rotation=0&showTitle=false&size=764826&status=done&style=none&taskId=uf87aa7ff-87b4-48b8-b78d-32157aa6bde&title=)图灵完备性
+在[可计算性理论](https://zh.wikipedia.org/wiki/%E5%8F%AF%E8%AE%A1%E7%AE%97%E6%80%A7%E7%90%86%E8%AE%BA)，如果一系列操作数据的规则（如[指令集](https://zh.wikipedia.org/wiki/%E6%8C%87%E4%BB%A4%E9%9B%86)、[编程语言](https://zh.wikipedia.org/wiki/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80)、[细胞自动机](https://zh.wikipedia.org/wiki/%E7%BB%86%E8%83%9E%E8%87%AA%E5%8A%A8%E6%9C%BA)）可以用来模拟任何[图灵机](https://zh.wikipedia.org/wiki/%E5%9B%BE%E7%81%B5%E6%9C%BA)，那么它便符合**图灵完备**（**Turing-complete**或**computationally universal**）。这意味着这个系统也可以识别其他数据处理规则集，图灵完备性被用作表达这种数据处理规则集的一种属性。如今，几乎所有编程语言都是具有图灵完备性的。这个词以引入图灵机概念的数学家[艾伦·图灵](https://zh.wikipedia.org/wiki/%E8%89%BE%E4%BC%A6%C2%B7%E5%9B%BE%E7%81%B5)命名。
+### λ演算
+是一套从数学逻辑中发展，以变量绑定和替换的规则，来研究[函数](https://zh.wikipedia.org/wiki/%E5%87%BD%E6%95%B0)如何抽象化定义、函数如何被应用以及[递归](https://zh.wikipedia.org/wiki/%E9%80%92%E5%BD%92)的[形式系统](https://zh.wikipedia.org/wiki/%E5%BD%A2%E5%BC%8F%E7%B3%BB%E7%B5%B1)。它由数学家[阿隆佐·邱奇](https://zh.wikipedia.org/wiki/%E9%98%BF%E9%9A%86%E4%BD%90%C2%B7%E9%82%B1%E5%A5%87)在20世纪30年代首次发表。lambda演算作为一种广泛用途的计算模型，可以清晰地定义什么是一个可计算函数，而任何可计算函数都能以这种形式表达和求值，它能模拟单一磁带[图灵机](https://zh.wikipedia.org/wiki/%E5%9B%BE%E7%81%B5%E6%9C%BA)的计算过程。
+lambda演算可比拟是最根本的编程语言，它包括了一条变换规则（变量替换）和一条将函数抽象化定义的方式。
+
+## Shell
+### Shell是什么
+Shell 是一个用 C 语言编写的程序，它是用户使用 Linux 的桥梁。Shell 既是一种命令语言，又是一种程序设计语言。
+Shell 是指一种应用程序，这个应用程序提供了一个界面，用户通过这个界面访问操作系统内核的服务。
+Shell脚本
+Shell 脚本（shell script），是一种为 shell 编写的脚本程序。 
+业界所说的 shell 通常都是指 shell 脚本，shell 和 shell script 是两个不同的概念。
+由于习惯的原因，简洁起见，本文出现的 "shell编程" 都是指 shell 脚本编程，不是指开发 shell 自身。
+#### Shell环境
+Shell 编程跟 JavaScript、php 编程一样，只要有一个能编写代码的文本编辑器和一个能解释执行的脚本解释器就可以了。
+Linux 的 Shell 种类众多，常见的有：
+
+- Bourne Shell（/usr/bin/sh或/bin/sh）
+-  Bourne Again Shell（/bin/bash）
+- C Shell（/usr/bin/csh）
+- K Shell（/usr/bin/ksh）
+- Shell for Root（/sbin/sh）
+- …… 
+
+本教程关注的是 **Bash**，也就是 Bourne Again Shell，由于易用和免费，Bash 在日常工作中被广泛使用。同时，Bash 也是大多数Linux 系统默认的 Shell。
+在一般情况下，人们并不区分 Bourne Shell 和 Bourne Again Shell，所以，像 **#!/bin/sh**，它同样也可以改为 **#!/bin/bash**。
+**#! 告诉系统其后路径所指定的程序即是解释此脚本文件的 Shell 程序。**
+#### 第一个Shell脚本
+在test.sh中：echo "hello haogege"
+(echo：向窗口输出文本)
+运行：
+1.作为可执行程序：chmod -x ./test.sh
+2.作为解释器参数：/bin/sh test.sh
+### Shell变量
+在Shell编程中，变量是用于存储数据值的名称
+#### 变量名
+定义变量名的规则：
+1.变量名不加美元符号$
+2.变量名和等号之间不能有空格
+3.只包含字母、数字和下划线： 变量名可以包含字母（大小写敏感）、数字和下划线 _，不能包含其他特殊字符。
+4.不能以数字开头： 变量名不能以数字开头，但可以包含数字。
+5.避免使用 Shell 关键字： 不要使用Shell的关键字（例如 if、then、else、fi、for、while 等）作为变量名，以免引起混淆。
+6.使用大写字母表示常量： 习惯上，常量的变量名通常使用大写字母，例如 PI=3.14。
+7.避免使用特殊符号： 尽量避免在变量名中使用特殊符号，因为它们可能与 Shell 的语法产生冲突。
+8.避免使用空格： 变量名中不应该包含空格，因为空格通常用于分隔命令和参数。
+eg:
+1.显示赋值：LD_12="/bin/"
+2.用语句给变量赋值：
+```
+for file in $(ls/etc)
+do
+echo $file
+done
+```
+#### 使用变量
+在变量名前面加美元符号即可
+变量名外面的花括号是可选的，加不加都行，加花括号是为了帮助解释器识别变量的边界。写花括号是好习惯。
+```
+your_name="haohao"
+echo $your_name
+echo ${your_name}
+```
+变量可重新赋值
+#### 只读变量
+使用 readonly 命令可以将变量定义为只读变量，只读变量的值不能被改变。
+尝试更改只读变量，结果报错：
+```
+myUrl="http://.."
+readonly myUrl
+myUrl="www"
+```
+#### 删除变量
+变量被删除后不能再次使用。unset 命令不能删除只读变量。
+```
+myUrl="http://.."
+unset myUrl
+echo $myUrl
+```
+以上实例执行将没有任何输出。
+### 变量类型
+#### 字符串变量
+可以使用单引号 ' 或双引号 " 来定义字符串
+#### 整数变量
+declare -i my_integer=42
+declare用于声明和设置变量的属性
+-i将变量声明为整数类型
+#### 数组变量
+1.整数索引数组：my_array=(1 2 3 4 5)
+2.关联数组：declare命令以及关联数组-A是bash的扩展，不是sh，所以要使用bash解释器而不是sh解释器
+```
+#!/bin/bash
+declare -A as_array
+as_array["name"]="haohao"
+as_array["age"]=23
+echo ${as_array["name"]}
+```
+bash和sh的区别总结
+> - **功能与扩展**：Bash 支持更多的功能和扩展，比如数组、命令补全、命令历史等，而 Sh 主要提供基本的命令解释和脚本编写功能。
+> - **兼容性**：Sh 通常是指 POSIX 标准 Shell，确保脚本在不同 Unix 系统上的可移植性。Bash 兼容 Bourne Shell 但提供了更多的特性，因此脚本在 Bash 中运行良好但可能不在 Sh 中兼容。
+> - **现代化**：Bash 是现代 Shell，具有更多的高级功能和用户友好的特性，而 Sh 更注重简洁和基本功能。
+
+#### 环境变量
+echo $PATH
+#### 特殊变量
+有一些特殊变量在 Shell 中具有特殊含义，例如 $0 表示脚本的名称，$1, $2, 等表示脚本的参数。$#表示传递给脚本的参数数量，$? 表示上一个命令的退出状态等。
+### Shell字符串
+可用单引号或双引号
+单引号的限制：
+    1.单引号里的任何字符都会原样输出，单引号字符串中的变量是无效的；
+    2.单引号字符串中不能出现单独一个的单引号（对单引号使用转义符后也不行），但可成对出现，作为字符串拼接使用。
+双引号的优点：
+    1.双引号里可以有变量
+    2.双引号里可以出现转义字符
+```
+#!/bin/bash
+your_name="haohao"
+str="Hello, I love you \"${your_name}\"!\n"
+echo -e $str
+```
+#### 拼接字符串
+使用双引号拼接
+```
+#!/bin/bash
+your_name="haohao"
+str1="Hello, I love you \"${your_name}\"!"
+str2="Yes, I love you ${your_name}!"
+echo $str1 $str2
+
+输出：Hello, I love you "haohao"! Yes, I love you haohao!
+```
+#### 获取字符串长度
+```
+#!/bin/bash
+your_name="haohao"
+echo ${#your_name}
+```
+#### 提取子字符串
+```
+#!/bin/bash
+your_name="haohao"
+echo ${your_name:1:3}
+```
+#### 查找子字符串
+查找字符 **y**或 **o** 或u这三个字母的位置(哪个字母先出现就计算哪个)
+```
+#!/bin/bash
+your_name="haohao, I love you"
+echo `expr index "$your_name" you`
+```
+语法解释：
+1.``命令替换：这行代码使用了反引号（`）进行命令替换。命令替换的作用是先执行反引号中的命令，然后将命令的输出结果替换到原位置。也可以使用 $() 语法来进行命令替换。
+2.
+3.
+### Shell数组
+定义数组
+读取数组
+获取数组长度
+### Shell注释
+多行注释
 # 二 代码积累
 ## 1.文档加载时候先运行这段
 ```

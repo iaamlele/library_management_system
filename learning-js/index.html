@@ -43,39 +43,6 @@
         //只有方法才可以$()，对象只能.来访问方法/属性 ->方法中包含对象 
         // ->创造一个原型对象obj，有很多方法，$这个方法中包含obj对象，也就包含其中方法
 
-        //方法一：使用对象字面量创建对象$
-        // const $ = {
-        //     hide: function (arg) {
-        //         console.log(arg);
-        //     },
-        //     show: function (arg) {
-        //         console.log(arg);
-        //     }
-        // };
-
-        // 方法二：使用函数构造对象  对象.属性/方法   $()是函数调用，怎么是对象？
-        // function $(arg) {
-        //     console.log(this);
-        //     console.log(arg);
-
-        //     function hide(arg) {
-        //         console.log("hide " + arg);
-        //     }
-        //     function show(arg) {
-        //         console.log("show " + arg);
-        //     }
-        // }
-        // $("p");
-
-        // 这种方法返回的对象和函数没有关系，此对象随函数调用而创建，无法链式调用
-        // const $ = function() {
-        //     return {
-        //         hide() {
-        //             console.log("hide");
-        //         }
-        //     }
-        // }
-
         //只有Function类型的对象可以使用()调用->创建一个Function类型的对象->
         // 1.直接在此对象中添加属性和方法，暂时不知道怎么达到链式调用效果->返回一个对象，;
         // 2.创建该函数实例，通过向其原型增加属性和方法，使得此函数继承这些属性/方法，方法返回obj，可以达到链式调用的效果，但是实例是对象，对象又不能使用()调用，只有Function函数才能这样调用。
@@ -83,7 +50,6 @@
 
 
         // 避免函数副作用！
-
         function $(arg) {
             const elements = [];
 
@@ -147,7 +113,7 @@
                 }
                 
             }
-        // console.log($(document));
+
         $(document).ready(function() {
             console.log($(document).ready);
             $("#class test").hide().show();
