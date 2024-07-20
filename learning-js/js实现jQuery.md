@@ -200,6 +200,8 @@ $(window).load 最后执行。如果页面加载大量内容，则可能需要�
 2.(()=> {
 })();
 ```
+
+作用域的特点..
 ## document.addEventListener('DOMContentLoaded', f, false);
 参数1：事件类型
 参数2：指定当事件触发时要执行的函数。
@@ -244,6 +246,96 @@ $.prototype.hide = $().hide;
 $.prototype.show = $().show;
 $.prototype.ready = $().ready;
 ```
+## 函数
+### 定义函数
+函数表达式和函数声明(有提升)
+## 类
+### 定义类
+类表达式和类声明(没有提升：不能在声明之前是有类)
+### 类主体
+可以从以下三个方面表述一个类元素的特征：
+
+- 种类：getter、setter、方法、字段
+- 位置：静态的或位于实例上
+- 可见性：公有或私有
+
+它们总共有 16 种可能的组合：
+1.方法的定义
+    公有的实例方法
+2.getter
+    公有的实例 getter 方法
+3.setter
+    公有的实例 setter 方法
+4.类公有字段
+    公有的实例字段
+5.static
+    公有的静态方法、静态 getter、静态 setter 和静态字段
+6.私有属性
+    所有私有的元素
+7.构造函数
+[constructor](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Classes/constructor) 方法是用于创建和初始化一个由类创建的对象的特殊方法。一个类只能拥有一个名为“constructor”的特殊方法。如果类包含多个 `constructor` 方法，将会抛出一个 [SyntaxError](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError)。
+构造函数可以使用 [super](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/super) 关键字来调用父类的构造函数。
+或者，如果实例属性的值不依赖构造函数的参数，那么你可以把它们定义为[类字段](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Classes#%E5%AD%97%E6%AE%B5%E5%A3%B0%E6%98%8E)。
+
+类字段/字段声明：
+类字段与对象属性相似，不属于变量，所以我们不需要使用诸如 `const` 一类的关键字去声明它们。
+```
+class Rectangle {
+  height = 0;
+  width;
+  constructor(height, width) {
+    this.height = height;
+    this.width = width;
+  }
+}
+
+```
+
+私有属性--暂未深入
+静态初始化块--暂未深入
+继承--暂未深入
+
+8.静态初始化块
+
+
+## 类和原型的关系
+总结：
+1.原型链是JavaScript对象的继承机制，通过对象的__proto__属性链接原型对象，形成链式结构。
+2.原型对象是通过构造函数的prototype属性定义的，用于存储共享的方法和属性。
+3.类是ES6引入的一种语法糖，简化了构造函数和原型方法的定义，但其本质依然基于原型继承机制。
+4.类定义的方法实际上是添加到构造函数的原型对象（prototype）上的，这样通过类创建的实例对象可以通过原型链访问这些方法。
+
+**当我们使用class关键字定义类时，JavaScript在背后做了以下几件事情：**
+**    1.创建一个函数，这个函数就是类的构造函数。**
+**    2.创建一个对象，这个对象就是类的原型对象（prototype），并将构造函数的prototype属性指向这个对象。**
+**    3.将在类定义中声明的所有方法添加到原型对象上。**
+
+
+
+## 闭包
+_**闭包**_是由函数以及声明该函数的词法环境组合而成的。该环境包含了这个闭包创建时作用域内的任何局部变量。
+**闭包**是指在创建时能够记住其词法作用域的函数，即使这个函数是在其词法作用域之外被调用的。在你的代码中，闭包的概念得到了很好的体现。
+举例：
+```
+function makeSizer(size) {
+  return function () {
+    document.body.style.fontSize = size + "px";
+  };
+}
+
+var size12 = makeSizer(12);
+var size14 = makeSizer(14);
+var size16 = makeSizer(16);
+
+```
+这个示例展示了闭包的以下特性：
+
+1. **函数内部函数访问外部函数变量**：匿名函数可以访问 `makeSizer` 函数中的 `size` 参数。
+2. **函数在其词法作用域外仍能访问词法作用域中的变量**：即使 `makeSizer` 函数已经执行完毕，返回的匿名函数仍然可以访问并使用 `size` 变量。
+
+用闭包模拟私有方法--暂未深入
+在循环中创建闭包：一个常见错误--暂未深入
+性能考量--暂未深入
 ## FP(Functional Programming)
 ## FP语言
 FP（缩写的Functional Programming），是John Backus创立的支持函数级编程范型的编程语言[2]。它允许消去命名变量。 
