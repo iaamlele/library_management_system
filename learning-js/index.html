@@ -38,25 +38,13 @@
     </div>
 
     <script>
-        //不是实现jquery的功能，而是完全复刻jquery，包括$符号等
-        //思路：创建$对象
-        //只有方法才可以$()，对象只能.来访问方法/属性 ->方法中包含对象 
-        // ->创造一个原型对象obj，有很多方法，$这个方法中包含obj对象，也就包含其中方法
-
-        //只有Function类型的对象可以使用()调用->创建一个Function类型的对象->
-        // 1.直接在此对象中添加属性和方法，暂时不知道怎么达到链式调用效果->返回一个对象，;
-        // 2.创建该函数实例，通过向其原型增加属性和方法，使得此函数继承这些属性/方法，方法返回obj，可以达到链式调用的效果，但是实例是对象，对象又不能使用()调用，只有Function函数才能这样调用。
-        // document.getElementById("button1");
-
-        // 避免函数副作用！
         // 训练编码能力，原型可优化，先自己优化。打算看看github上别人的写法，先自己写，再借鉴学习。
-        // 直接写一个jquery的构造函数，直接new
+
         class Class_${
             constructor(arg) {
                 this.arg = arg;
 
                 const elements = [];
-
                 this.elements = elements;
 
                 if(typeof arg === "string") {
@@ -82,9 +70,7 @@
                     Class_$.instance = this;
                 }
 
-                return Class_$.instance;
-                // 怎么在构造函数中创建一个对象并返回，同时还要保持每一次调用构造函数只使用第一次创建的对象
-                // 单例模式？可以通过在类内部使用静态属性来存储实例，从而实现单例模式                
+                return Class_$.instance;             
             }
 
             entrance(arg) {
@@ -158,12 +144,8 @@
             let instance;
             function init(arg) {
                 if(!instance) {
-                    console.log("OK1");
                     instance = new Class_$(arg);
                 }else {
-                    console.log("OK2");
-                    // 这句没有作用,因为构造函数在js中是专门用来创建新实例的，不是用来重新初始化已有实例的。
-                    // instance.constructor(arg);
                     instance.entrance(arg);
                 }
                 return instance;
@@ -173,14 +155,7 @@
             }
         })();
 
-        // TypeError: $ is not a function    
-        // $是一个对象，对象访问属性只能.    函数()每次调用要创建多个对象   思路：单例-》只创建一个对象，且能用()的方式调用？
-        // 在class内部创建实例,并且把这个实例作为一个函数来处理
-        // 如何把这个实例作为一个函数来处理
-        // instance声明问题->如何声明在一个更高的作用域中而不是函数中
-
         $(document).ready(function() {
-            // console.log($("#first-id"));
             $("#first-id").hide().show();
         });
     </script>
