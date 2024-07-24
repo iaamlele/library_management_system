@@ -1,19 +1,23 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { title } = require('process');
 
-module.exports = {
+ module.exports = {
+    mode: 'development',
     entry: {
-        index: './src/index.js',
-        print: './src/print.js',
+        index: {
+            import: './src/index.js',
+            dependOn: 'shared',
+        },
+        another: {
+            import: './src/another-module.js',
+            dependOn: 'shared',
+        },
+        shared: 'lodash',
     },
-    plugins: [
-        new HtmlWebpackPlugin({
-            title: '管理输出',
-        }),
-    ],
     output: {
         filename: '[name].bundle.js',
         path: path.resolve(__dirname, 'dist'),
     },
-}
+    optimization: {
+        runtimeChunk: 'single',
+    },
+ };
