@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Reproduce jQuery using C language</title>
+
+    <!-- jquery测试 -->
+    <!-- <script src="https://code.jquery.com/jquery-3.7.1.js"
+    integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script>
+            $(document).ready(function(){
+                $("button").click(function(){
+                    // $("p").hide(1000, "swing", function() {
+                    //     $("#first-h2").hide(1000, "linear");
+                    // }); //第二个参数：jQuery自身提供"linear" 和 "swing"
+                    $("p").fadeOut();
+                });
+            });
+    </script> -->
+</head>
+
+<body>
+
+    <div id="first">
+        <h1>h1:测试hide和show</h1>
+        <button id="button1">hide</button>
+        <button id="button2">show</button>
+        <button id="button3">hide/show</button>
+        <p id="first-id" class="class test">这是第一个段落。</p>
+    </div>
+
+    <div id="second">
+        <div class="second-class1">
+            <h2 id="first-h2">这是第一个h2标题</h2>
+            <p id="second-p" class="class test">这是第二个段落。</p>
+        </div>
+    </div>
+    
+
+</body>
+
+</html>
