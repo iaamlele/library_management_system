@@ -1,119 +1,83 @@
+import _ from 'lodash';
+import './styles.css';
+import printMe from './print.js';
+
+function component() {
+    const element = document.createElement('div');
+    const btn = document.createElement('button');
+
+    element.classList.add('text');
+    element.innerHTML = _.join(['Hello', 'webpack'], ' ');
+
+    btn.classList.add('btn');
+    btn.innerHTML = 'click me';
+    btn.onclick = printMe;
+
+    element.appendChild(btn);
+
+    return element;
+}
+
 // 训练编码能力，原型可优化，先自己优化。打算看看github上别人的写法，先自己写，再借鉴学习。
 class Class_${
     constructor(arg) {
-        this.arg = arg;
-
-        const elements = [];
-        this.elements = elements;
+        this.elements = [];
 
         if(typeof arg === "string") {
             const arg_class = new RegExp("^\\..*");
             const arg_id = new RegExp("^#.*");
             const arg_tag = new RegExp("^[a-zA-Z][a-zA-z0-9]*");
             if(arg_class.test(arg)) {
-                const classes = document.getElementsByClassName(arg.slice(1));
-                elements.push(classes);
+                this.elements = Array.from(document.getElementsByClassName(arg.slice(1)));
             }else if(arg_id.test(arg)) {
-                const ids = document.getElementById(arg.slice(1));
-                elements.push(ids);
-                elements[1] = 1;
+                this.elements = Array.from(document.getElementById(arg.slice(1)));
             }else if(arg_tag.test(arg)) {
-                const tags = document.getElementsByTagName(arg);
-                elements.push(tags);
+                this.elements = Array.from(document.getElementsByTagName(arg));
             }
         }else if(typeof arg === "object") {
-            elements.push(arg);
-        }
-
-        if(!Class_$.instance) {
-            Class_$.instance = this;
-        }
-
-        return Class_$.instance;             
+            this.elements = arg;
+        }          
     }
 
     entrance(arg) {
-        this.elements = [];
-        if(typeof arg === "string") {
-            const arg_class = new RegExp("^\\..*");
-            const arg_id = new RegExp("^#.*");
-            const arg_tag = new RegExp("^[a-zA-Z][a-zA-z0-9]*");
-            this.elements[1] = 0;
-            if(arg_class.test(arg)) {
-                const classes = document.getElementsByClassName(arg.slice(1));
-                this.elements.push(classes);
-            }else if(arg_id.test(arg)) {
-                const ids = document.getElementById(arg.slice(1));
-                this.elements[0] = ids;
-                this.elements[1] = 1;
-                
-            }else if(arg_tag.test(arg)) {
-                const tags = document.getElementsByTagName(arg);
-                this.elements.push(tags);
-            }
-        }else if(typeof arg === "object") {
-            this.elements.push(arg);
-        }
-
-        if(!Class_$.instance) {
-            Class_$.instance = this;
-        }
-
+        this.constructor(arg);
         return this;
     }
 
     hide() {
-        const elem = this.elements[0];
-        const is_id = this.elements[1];
-        if(is_id === 1) {
-            elem.style.visibility = 'hidden';
-        }else {
-            for(let i = 0; i < elem.length; i++) {
-                elem.item(i).style.visibility = 'hidden';
-            }
-        }
+        this.elements.forEach(el => el.style.visibility = 'hidden');
         return this;
     }
 
     show() {
-        const elem = this.elements[0];
-        const is_id = this.elements[1];
-        if(is_id === 1) {
-            elem.style.visibility = 'visible';
-        }else {
-            for(let i = 0; i < elem.length; i++) {
-                elem.item(i).style.visibility = 'visible';
-            }
-        }
+        this.elements.forEach(el => el.style.visibility = 'visible');
         return this;
     }
 
     ready(f) {
-        const elem = this.elements[0];
-        if(elem === document) {
-            return document.addEventListener("DOMContentLoaded", f, false);
-        }else {
-            return null;
-        }
-        
+        document.addEventListener("DOMContentLoaded", f, false);
     }
 }
 
-const $ = (function() {
-    let instance;
-    function init(arg) {
-        if(!instance) {
-            instance = new Class_$(arg);
-        }else {
-            instance.entrance(arg);
-        }
-        return instance;
-    }
-    return function(arg) {
-        return init(arg);
-    }
-})();
+function jq(selector) {
+    const instance = new Class_$(selector);
+    return instance;
+}
 
+const $ = jq;
 $(document).ready(function() {
-    $("#first-id").hide().show();
+    $(".btn").hide();
 });
+
+
+let element = component();
+document.body.appendChild(element);
+
+if(module.hot) {
+    module.hot.accept('./print.js', function() {
+        console.log('正在接受更新后的 printMe 模块！');
+        document.body.removeChild(element);
+        element = component();
+        document.body.appendChild(element);
+    })
+}
