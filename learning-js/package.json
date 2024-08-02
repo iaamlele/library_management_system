@@ -1,7 +1,6 @@
 {
   "dependencies": {
-    "js": "^0.1.0",
-    "lodash": "^4.17.21"
+    "js": "^0.1.0"
   },
   "devDependencies": {
     "css-loader": "^7.1.2",
@@ -10,6 +9,7 @@
     "html-loader": "^5.1.0",
     "html-webpack-plugin": "^5.6.0",
     "json5": "^2.2.3",
+    "lodash": "^4.17.21",
     "style-loader": "^4.0.0",
     "toml": "^3.0.0",
     "webpack": "^5.93.0",
@@ -18,7 +18,7 @@
     "xml-loader": "^1.2.1",
     "yamljs": "^0.3.0"
   },
-  "name": "learning",
+  "name": "jq",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -30,5 +30,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "main": "dist/jq-webpack.js",
+  "directories": {
+    "test": "test"
+  },
   "description": ""
 }

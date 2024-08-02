@@ -27,8 +27,20 @@ module.exports = {
     }),
   ],
   output: {
-    filename: '[name].bundle.js',
+    filename: 'jq-webpack.js',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
+    library: {
+        name: 'jq',
+        type: 'umd',
+    },
+  },
+  externals: {
+    lodash: {   
+      commonjs: 'lodash',   
+      commonjs2: 'lodash',   
+      amd: 'lodash',   
+      root: '_',   
+    },   
   },
 };

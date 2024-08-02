@@ -1,17 +1,11 @@
 import _ from 'lodash';
-import './styles.css';
-import printMe from './print.js';
+export default jq;
 
 function component() {
     const element = document.createElement('div');
     const btn = document.createElement('button');
-
-    element.classList.add('text');
-    element.innerHTML = _.join(['Hello', 'webpack'], ' ');
-
     btn.classList.add('btn');
     btn.innerHTML = 'click me';
-    btn.onclick = printMe;
 
     element.appendChild(btn);
 
@@ -45,12 +39,12 @@ class Class_${
     }
 
     hide() {
-        this.elements.forEach(el => el.style.visibility = 'hidden');
+        this.elements.forEach(el => el.style.display = 'none');
         return this;
     }
 
     show() {
-        this.elements.forEach(el => el.style.visibility = 'visible');
+        this.elements.forEach(el => el.style.display = 'block');
         return this;
     }
 
@@ -66,18 +60,9 @@ function jq(selector) {
 
 const $ = jq;
 $(document).ready(function() {
-    $(".btn").hide();
+    $(".btn").hide().show();
 });
 
 
 let element = component();
 document.body.appendChild(element);
-
-if(module.hot) {
-    module.hot.accept('./print.js', function() {
-        console.log('正在接受更新后的 printMe 模块！');
-        document.body.removeChild(element);
-        element = component();
-        document.body.appendChild(element);
-    })
-}
