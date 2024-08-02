@@ -60,7 +60,7 @@ function jq(selector) {
 
 const $ = jq;
 $(document).ready(function() {
-    $(".btn").hide().show();
+    $(".btn").hide();
 });
 
 
