@@ -1,5 +1,5 @@
 import _ from 'lodash';
-export default jq;
+// export default jq;
 
 function component() {
     const element = document.createElement('div');
@@ -53,14 +53,12 @@ class Class_${
     }
 }
 
-function jq(selector) {
-    const instance = new Class_$(selector);
-    return instance;
+function $(arg) {
+    return new Class_$(arg);
 }
 
-const $ = jq;
 $(document).ready(function() {
-    $(".btn").hide();
+    $(".btn").hide().show();
 });
 
 
